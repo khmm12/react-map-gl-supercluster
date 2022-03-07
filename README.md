@@ -124,7 +124,7 @@ function Markers(props: MarkersProps): ReactElement {
   const map = useMap().current
 
   // Points should be memoized
-  const points = useMemo(() => createPoints(items), [])
+  const points = useMemo(() => createPoints(items), [items])
 
   const { supercluster, clusters } = useSupercluster(points, {
     map: mapFeature,
