@@ -1,0 +1,47 @@
+{
+  "name": "react-map-gl-supercluster",
+  "version": "1.0.0",
+  "license": "MIT",
+  "sideEffects": false,
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "react-map-gl",
+    "supercluster",
+    "clustering",
+    "react"
+  ],
+  "packageManager": "yarn@3.2.0",
+  "scripts": {
+    "build": "tsup src/index.ts --minify"
+  },
+  "dependencies": {
+    "@types/react": ">=16.8.0",
+    "@types/supercluster": "^7",
+    "dequal": "^2.0.2",
+    "supercluster": "^7"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-map-gl": "^7"
+  },
+  "devDependencies": {
+    "prettier": "^2.5.1",
+    "react": "^17.0.2",
+    "react-map-gl": "^7.0.9",
+    "tsup": "^5.11.13",
+    "typescript": "^4.6.2"
+  }
+}

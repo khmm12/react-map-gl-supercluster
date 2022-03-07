@@ -1,0 +1,41 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Coverage
+lib-cov
+coverage
+.nyc_output
+
+# Dependency directories
+node_modules
+
+# Cache
+.npm
+.eslintcache
+
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
+# IDE
+.vscode
+
+# OS
+.DS_Store
+
+# Developer specific configuration files
+.env
+.nodenv-vars
+.tool-versions
+
+# Artifacts
+dist
