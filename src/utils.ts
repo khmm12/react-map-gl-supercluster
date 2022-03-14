@@ -19,9 +19,18 @@ export function isClustersShallowEqual<T, C extends ReadonlyArray<PointFeature<T
     clusters1.length === clusters2.length &&
     clusters1.every((feature1, index) => {
       const feature2 = clusters2[index]
-      return feature1.type === feature2.type && feature1.id === feature2.id
+      return (
+        feature1 === feature2 ||
+        (feature1.type === feature2.type &&
+          feature1.id === feature2.id &&
+          isPointGeometryEqual(feature1.geometry, feature2.geometry))
+      )
     })
   )
+}
+
+function isPointGeometryEqual<T, P extends PointFeature<T>['geometry']>(a: P, b: P): boolean {
+  return a === b || (a.type === b.type && isEqual(a.coordinates, b.coordinates))
 }
 
 export function getMapState(map: MapRef): MapState {
