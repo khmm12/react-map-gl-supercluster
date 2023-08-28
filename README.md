@@ -5,7 +5,7 @@
 # Highlights
 
 - TypeScript support.
-- Both ESM and CJS modules support.
+- ESM support.
 - Ready for tree shaking.
 - No unnecessary re-renders.
 
