@@ -1,9 +1,10 @@
-import type { MapRef } from 'react-map-gl'
 import { dequal } from 'dequal/lite'
-import type { PointFeature, ClusterFeature } from './types'
+import type { PointFeature, ClusterFeature, RelMapRef } from './types'
+
+type MapBounds = [number, number, number, number]
 
 type MapState = {
-  bounds: [number, number, number, number]
+  bounds: MapBounds
   zoom: number
 }
 
@@ -13,7 +14,7 @@ export function isEqual<T>(a: T, b: T): boolean {
 
 export function isClustersShallowEqual<T, C extends ReadonlyArray<PointFeature<T> | ClusterFeature<T>>>(
   clusters1: C,
-  clusters2: C
+  clusters2: C,
 ): boolean {
   return (
     clusters1.length === clusters2.length &&
@@ -33,8 +34,8 @@ function isPointGeometryEqual<T, P extends PointFeature<T>['geometry']>(a: P, b:
   return a === b || (a.type === b.type && isEqual(a.coordinates, b.coordinates))
 }
 
-export function getMapState(map: MapRef): MapState {
-  const bounds = map.getBounds().toArray().flat() as [number, number, number, number]
+export function getMapState(map: RelMapRef): MapState {
+  const bounds = map.getBounds().toArray().flat() as MapBounds
   const zoom = Math.round(map.getZoom())
   return { bounds, zoom }
 }

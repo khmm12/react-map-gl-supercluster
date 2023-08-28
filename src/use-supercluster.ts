@@ -1,5 +1,5 @@
-import { RefObject, useEffect, useMemo, useRef, useState } from 'react'
-import { MapRef, useMap } from 'react-map-gl'
+import { type RefObject, useEffect, useMemo, useRef, useState } from 'react'
+import { useMap } from 'react-map-gl'
 import Supercluster from 'supercluster'
 import { getMapState, isEqual, isClustersShallowEqual } from './utils'
 import type {
@@ -8,23 +8,31 @@ import type {
   PointFeatureProperties,
   SuperclusterOptions,
   SuperclusterInstance,
+  GeoJsonProperties,
+  RelMapRef
 } from './types'
 
-export type UseSuperclusterReturnValue<TFeatureProperties, TClusterProperties> = {
+export type UseSuperclusterReturnValue<
+  TFeatureProperties extends GeoJsonProperties,
+  TClusterProperties extends GeoJsonProperties,
+> = {
   clusters: Array<Cluster<TFeatureProperties, TClusterProperties>>
   supercluster: SuperclusterInstance<TFeatureProperties, TClusterProperties>
 }
 
-export type UseSuperclusterOptions<TFeatureProperties, TClusterProperties> = SuperclusterOptions<
-  TFeatureProperties,
-  TClusterProperties
-> & {
-  mapRef?: MapRef | RefObject<MapRef> | undefined
+export type UseSuperclusterOptions<
+  TFeatureProperties extends GeoJsonProperties,
+  TClusterProperties extends GeoJsonProperties,
+> = SuperclusterOptions<TFeatureProperties, TClusterProperties> & {
+  mapRef?: RelMapRef | RefObject<RelMapRef> | undefined
 }
 
-export default function useReactMapGLSupercluster<TFeatureProperties, TClusterProperties>(
+export default function useReactMapGLSupercluster<
+  TFeatureProperties extends GeoJsonProperties,
+  TClusterProperties extends GeoJsonProperties,
+>(
   points: Array<PointFeature<PointFeatureProperties<TFeatureProperties>>>,
-  options: UseSuperclusterOptions<TFeatureProperties, TClusterProperties> = {}
+  options: UseSuperclusterOptions<TFeatureProperties, TClusterProperties> = {},
 ): UseSuperclusterReturnValue<TFeatureProperties, TClusterProperties> {
   const map = useResolvedMapRef(options.mapRef)
   const supercluster = useSuperclusterFactory(points, options)
@@ -79,15 +87,18 @@ export default function useReactMapGLSupercluster<TFeatureProperties, TClusterPr
   return state
 }
 
-function useResolvedMapRef(outerRef?: MapRef | RefObject<MapRef | null | undefined> | undefined): MapRef | null {
+function useResolvedMapRef(outerRef?: RelMapRef | RefObject<RelMapRef | null | undefined> | undefined): RelMapRef | null {
   const maps = useMap()
-  if (outerRef != null) return 'current' in outerRef ? outerRef.current || null : outerRef
-  return maps.current || null
+  if (outerRef != null) return 'current' in outerRef ? outerRef.current ?? null : outerRef
+  return maps.current ?? null
 }
 
-function useSuperclusterFactory<TFeatureProperties, TClusterProperties>(
+function useSuperclusterFactory<
+  TFeatureProperties extends GeoJsonProperties,
+  TClusterProperties extends GeoJsonProperties,
+>(
   points: Array<PointFeature<PointFeatureProperties<TFeatureProperties>>>,
-  _options: SuperclusterOptions<TFeatureProperties, TClusterProperties>
+  _options: SuperclusterOptions<TFeatureProperties, TClusterProperties>,
 ) {
   // Memoize options
   const nextOptions = pickOptions(_options)
@@ -102,8 +113,8 @@ function useSuperclusterFactory<TFeatureProperties, TClusterProperties>(
   }, [points, options])
 }
 
-function pickOptions<TFeatureProperties, TClusterProperties>(
-  options: SuperclusterOptions<TFeatureProperties, TClusterProperties>
+function pickOptions<TFeatureProperties extends GeoJsonProperties, TClusterProperties extends GeoJsonProperties>(
+  options: SuperclusterOptions<TFeatureProperties, TClusterProperties>,
 ) {
   const {
     minZoom = 0,
