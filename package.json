@@ -22,7 +22,9 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "mapbox",
+    "maplibre"
   ],
   "keywords": [
     "react-map-gl",
