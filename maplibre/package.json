@@ -1,0 +1,5 @@
+{
+  "private": true,
+  "types": "../dist/exports-maplibre.d.ts",
+  "import": "../dist/exports-maplibre.js"
+}

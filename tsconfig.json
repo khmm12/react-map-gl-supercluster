@@ -5,12 +5,13 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "lib": ["ESNext", "DOM"],
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "noEmit": true,
+    "module": "NodeNext",
+    "noEmit": false,
     "skipLibCheck": true,
     "strict": true,
-    "target": "ESNext"
+    "target": "ESNext",
+    "outDir": "./dist",
+    "declaration": true
   },
   "exclude": [
     "dist"

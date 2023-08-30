@@ -1,5 +1,5 @@
 import { dequal } from 'dequal/lite'
-import type { PointFeature, ClusterFeature, RelMapRef } from './types'
+import type { PointFeature, ClusterFeature, RelMapRef } from './types.js'
 
 type MapBounds = [number, number, number, number]
 

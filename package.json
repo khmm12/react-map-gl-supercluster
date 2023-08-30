@@ -1,16 +1,24 @@
 {
   "name": "react-map-gl-supercluster",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/exports-mapbox.js",
+  "module": "./dist/exports-mapbox.js",
+  "types": "./dist/exports-mapbox.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/exports-mapbox.d.ts",
+      "import": "./dist/exports-mapbox.js"
+    },
+    "./mapbox": {
+      "types": "./dist/exports-mapbox.d.ts",
+      "import": "./dist/exports-mapbox.js"
+    },
+    "./maplibre": {
+      "types": "./dist/exports-maplibre.d.ts",
+      "import": "./dist/exports-maplibre.js"
     }
   },
   "files": [
@@ -24,25 +32,35 @@
   ],
   "packageManager": "yarn@3.6.3",
   "scripts": {
-    "build": "tsup src/index.ts --minify",
-    "typecheck": "tsc --noEmit --pretty --project ."
+    "build": "rm -rf dist && tsc",
+    "typecheck": "tsc --noEmit --pretty"
   },
   "dependencies": {
     "@types/react": ">=16.8.0",
-    "@types/supercluster": "^7",
+    "@types/supercluster": "^7.1.0",
     "dequal": "^2.0.3",
     "supercluster": "^8.0.1"
   },
   "peerDependencies": {
+    "mapbox-gl": "*",
+    "maplibre-gl": "*",
     "react": ">=16.8.0",
+    "react-dom": "*",
     "react-map-gl": "^7"
+  },
+  "peerDependenciesMeta": {
+    "mapbox-gl": {
+      "optional": true
+    },
+    "maplibre-gl": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "maplibre-gl": "^3.3.0",
     "prettier": "^3.0.2",
     "react": "^18.2.0",
     "react-map-gl": "^7.1.5",
-    "tsup": "^7.2.0",
     "typescript": "^5.2.2"
   }
 }
