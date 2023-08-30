@@ -20,13 +20,13 @@ $ npm install react-map-gl-supercluster
 # Usage
 
 ```tsx
-import Map, { useMap } from 'react-map-gl'
+import Map, { useMap } from 'react-map-gl' // react-map-gl/maplibre if you use maplibre instead
 import {
   useSupercluster,
   PointFeature,
   PointFeatureProperties,
   PointClusterProperties
-} from 'react-map-gl-supercluster'
+} from 'react-map-gl-supercluster' // or react-map-gl-supercluster/maplibre if you use maplibre instead
 
 type Item = {}
 type ItemPointFeatureProperties = PointFeatureProperties<{ item: Item }>
@@ -103,8 +103,8 @@ function reduceCluster(memo: ItemPointClusterProperties, props: ItemPointCluster
 Alternatively you can use the hook inside `Map`.
 
 ```tsx
-import Map, { useMap } from 'react-map-gl'
-import { useSupercluster } from 'react-map-gl-supercluster'
+import Map, { useMap } from 'react-map-gl'// react-map-gl/maplibre if you use maplibre instead
+import { useSupercluster } from 'react-map-gl-supercluster' // or react-map-gl-supercluster/maplibre if you use maplibre instead
 
 function MyAwesomeMap(): ReactElement {
   return (
