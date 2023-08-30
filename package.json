@@ -1,6 +1,6 @@
 {
   "name": "react-map-gl-supercluster",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
