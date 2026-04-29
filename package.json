@@ -2,6 +2,10 @@
   "name": "react-map-gl-supercluster",
   "version": "3.0.0",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khmm12/react-map-gl-supercluster.git"
+  },
   "sideEffects": false,
   "type": "module",
   "exports": {
