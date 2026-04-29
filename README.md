@@ -2,14 +2,14 @@
 
 > The easiest way to get `react-map-gl` and `supercluster` to work together
 
-# Highlights
+## Highlights
 
 - TypeScript support.
 - ESM support.
 - Ready for tree shaking.
 - No unnecessary re-renders.
 
-# Install
+## Install
 
 ```bash
 $ pnpm add react-map-gl-supercluster
@@ -19,7 +19,7 @@ $ yarn add react-map-gl-supercluster
 $ npm install react-map-gl-supercluster
 ```
 
-# Usage
+## Usage
 
 Choose the `react-map-gl-supercluster` entrypoint that matches your `react-map-gl` entrypoint.
 
@@ -31,7 +31,7 @@ Choose the `react-map-gl-supercluster` entrypoint that matches your `react-map-g
 
 There is no root entrypoint in v3+ because `react-map-gl` v8 no longer has a default root export.
 
-# Example usage
+## Example usage
 
 ```tsx
 import { type ReactElement, useMemo, useRef } from 'react'
@@ -163,7 +163,7 @@ function Markers(props: MarkersProps) {
 }
 ```
 
-# Example
+## Demo
 
 The repository includes a Vite + MapLibre example. It uses the public MapLibre demo style, so no Mapbox token is required.
 
@@ -173,24 +173,24 @@ $ pnpm example
 
 Open the URL printed by Vite.
 
-# API
+## API
 
-## `useSupercluster`
+### `useSupercluster`
 
 The hook can be used in a component which renders `Map` component or inside `Map` children.
 
-### Arguments
+#### Arguments
 
 1. `points` - GeoJSON points array. The value should be memoized.
 2. `options` – various options, see below.
 
-### Return value
+#### Return value
 
 Object which contains 2 fields:
 - `clusters` – clusters list
 - `supercluster` – supercluster instance.
 
-## Options
+### Options
 
 | Option     | Default  | Description                                                                                                                                                                          |
 | ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -207,12 +207,12 @@ Object which contains 2 fields:
 
 `react-map-gl-supercluster` supports all `supercluster` options, you can find more information about them [there](https://github.com/mapbox/supercluster#options).
 
-# FAQ
+## FAQ
 
-## Why does it cause component re-rendering or why do I get infinite component update loop?
+### Why does it cause component re-rendering or why do I get infinite component update loop?
 
 Please be careful with `points` and `map`/`reduce` functions. They always should be memoized.
 
-## Does it support WebWorker?
+### Does it support WebWorker?
 
 No, the hook is running in the main thread. But probably WebWorker support will come in the future.
