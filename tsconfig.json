@@ -1,22 +1,17 @@
 {
-  "compilerOptions": {
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "lib": ["ESNext", "DOM"],
-    "module": "NodeNext",
-    "noEmit": false,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "ESNext",
-    "outDir": "./dist",
-    "declaration": true
-  },
-  "exclude": [
-    "dist"
-  ],
-  "include": [
-    "src"
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.test.json"
+    },
+    {
+      "path": "./example/tsconfig.json"
+    },
+    {
+      "path": "./example/tsconfig.node.json"
+    }
   ]
 }

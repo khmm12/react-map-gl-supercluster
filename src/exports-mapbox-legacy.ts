@@ -1,4 +1,4 @@
-import { type MapRef, useMap } from 'react-map-gl/mapbox'
+import { type MapRef, useMap } from 'react-map-gl/mapbox-legacy'
 import type { GeoJsonProperties } from './types.js'
 import { create, type UseSuperclusterOptions as UseSuperclusterOptions1 } from './use-supercluster.js'
 

@@ -1,17 +1,10 @@
 {
   "name": "react-map-gl-supercluster",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
-  "main": "./dist/exports-mapbox.js",
-  "module": "./dist/exports-mapbox.js",
-  "types": "./dist/exports-mapbox.d.ts",
   "exports": {
-    ".": {
-      "types": "./dist/exports-mapbox.d.ts",
-      "import": "./dist/exports-mapbox.js"
-    },
     "./mapbox": {
       "types": "./dist/exports-mapbox.d.ts",
       "import": "./dist/exports-mapbox.js"
@@ -19,12 +12,14 @@
     "./maplibre": {
       "types": "./dist/exports-maplibre.d.ts",
       "import": "./dist/exports-maplibre.js"
+    },
+    "./mapbox-legacy": {
+      "types": "./dist/exports-mapbox-legacy.d.ts",
+      "import": "./dist/exports-mapbox-legacy.js"
     }
   },
   "files": [
-    "dist",
-    "mapbox",
-    "maplibre"
+    "dist"
   ],
   "keywords": [
     "react-map-gl",
@@ -32,14 +27,16 @@
     "clustering",
     "react"
   ],
-  "packageManager": "yarn@3.6.3",
+  "packageManager": "pnpm@10.33.2",
   "scripts": {
-    "build": "rm -rf dist && tsc",
-    "typecheck": "tsc --noEmit --pretty"
+    "build": "rm -rf dist && tsc -b tsconfig.lib.json --force",
+    "example": "vite example",
+    "lint": "biome check",
+    "typecheck": "tsc -b --pretty --force"
   },
   "dependencies": {
-    "@types/react": ">=16.8.0",
-    "@types/supercluster": "^7.1.0",
+    "@types/react": "^19.2.14",
+    "@types/supercluster": "^7.1.3",
     "dequal": "^2.0.3",
     "supercluster": "^8.0.1"
   },
@@ -48,7 +45,7 @@
     "maplibre-gl": "*",
     "react": ">=16.8.0",
     "react-dom": "*",
-    "react-map-gl": "^7"
+    "react-map-gl": "^8"
   },
   "peerDependenciesMeta": {
     "mapbox-gl": {
@@ -59,10 +56,19 @@
     }
   },
   "devDependencies": {
-    "maplibre-gl": "^3.3.0",
-    "prettier": "^3.0.2",
-    "react": "^18.2.0",
-    "react-map-gl": "^7.1.5",
-    "typescript": "^5.2.2"
+    "@biomejs/biome": "^2.4.13",
+    "@tsconfig/node24": "^24.0.4",
+    "@tsconfig/strictest": "^2.0.8",
+    "@tsconfig/vite-react": "^7.0.2",
+    "@types/node": "^25.6.0",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "mapbox-gl": "^3.23.0",
+    "maplibre-gl": "^5.24.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-map-gl": "^8.1.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.10"
   }
 }

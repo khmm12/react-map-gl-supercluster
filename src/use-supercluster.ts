@@ -1,15 +1,15 @@
 import { type RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import Supercluster from 'supercluster'
-import { getMapState, isEqual, isClustersShallowEqual } from './utils.js'
 import type {
   Cluster,
+  GeoJsonProperties,
   PointFeature,
   PointFeatureProperties,
-  SuperclusterOptions,
-  SuperclusterInstance,
-  GeoJsonProperties,
   RelMapRef,
+  SuperclusterInstance,
+  SuperclusterOptions,
 } from './types.js'
+import { getMapState, isClustersShallowEqual, isEqual } from './utils.js'
 
 export type UseSuperclusterReturnValue<
   TFeatureProperties extends GeoJsonProperties,
@@ -24,7 +24,7 @@ export type UseSuperclusterOptions<
   TFeatureProperties extends GeoJsonProperties,
   TClusterProperties extends GeoJsonProperties,
 > = SuperclusterOptions<TFeatureProperties, TClusterProperties> & {
-  mapRef?: MapRef | RefObject<MapRef> | undefined
+  mapRef?: MapRef | RefObject<MapRef | null | undefined> | undefined | null
 }
 
 type UseMap<T> = () => {
@@ -63,6 +63,14 @@ export function create<MapRef extends RelMapRef>(useMap: UseMap<MapRef>) {
         setState((current) => {
           const nextMapState = getMapState(map)
 
+          if (nextMapState == null) {
+            if (current.mapState != null || current.clusters.length > 0 || current.supercluster !== supercluster) {
+              return { supercluster, mapState: null, clusters: [] }
+            }
+
+            return current
+          }
+
           // Supercluster has changed, always re-ask clusters
           if (current.supercluster !== supercluster) {
             const nextClusters = supercluster.getClusters(nextMapState.bounds, nextMapState.zoom)
@@ -94,10 +102,10 @@ export function create<MapRef extends RelMapRef>(useMap: UseMap<MapRef>) {
   }
 
   function useResolvedMapRef(
-    outerRef?: RelMapRef | RefObject<RelMapRef | null | undefined> | undefined,
-  ): RelMapRef | null {
+    outerRef?: MapRef | RefObject<MapRef | null | undefined> | null | undefined,
+  ): MapRef | null {
     const maps = useMap()
-    if (outerRef != null) return 'current' in outerRef ? outerRef.current ?? null : outerRef
+    if (outerRef != null) return 'current' in outerRef ? (outerRef.current ?? null) : outerRef
     return maps.current ?? null
   }
 

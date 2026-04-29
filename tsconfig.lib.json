@@ -1,0 +1,15 @@
+{
+  "extends": "@tsconfig/strictest/tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "jsx": "react-jsx",
+    "lib": ["ESNext", "DOM"],
+    "module": "NodeNext",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "target": "ESNext"
+  },
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts"]
+}

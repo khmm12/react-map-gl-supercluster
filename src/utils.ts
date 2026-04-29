@@ -1,5 +1,5 @@
 import { dequal } from 'dequal/lite'
-import type { PointFeature, ClusterFeature, RelMapRef } from './types.js'
+import type { ClusterFeature, PointFeature, RelMapRef } from './types.js'
 
 type MapBounds = [number, number, number, number]
 
@@ -20,6 +20,8 @@ export function isClustersShallowEqual<T, C extends ReadonlyArray<PointFeature<T
     clusters1.length === clusters2.length &&
     clusters1.every((feature1, index) => {
       const feature2 = clusters2[index]
+      if (feature2 == null) return false
+
       return (
         feature1 === feature2 ||
         (feature1.type === feature2.type &&
@@ -34,8 +36,11 @@ function isPointGeometryEqual<T, P extends PointFeature<T>['geometry']>(a: P, b:
   return a === b || (a.type === b.type && isEqual(a.coordinates, b.coordinates))
 }
 
-export function getMapState(map: RelMapRef): MapState {
-  const bounds = map.getBounds().toArray().flat() as MapBounds
+export function getMapState(map: RelMapRef): MapState | null {
+  const mapBounds = map.getBounds()
+  if (mapBounds == null) return null
+
+  const bounds = mapBounds.toArray().flat() as MapBounds
   const zoom = Math.round(map.getZoom())
   return { bounds, zoom }
 }

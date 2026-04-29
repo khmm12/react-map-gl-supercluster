@@ -1,17 +1,16 @@
-import { useMap, type MapRef } from 'react-map-gl/maplibre'
+import { type MapRef, useMap } from 'react-map-gl/maplibre'
+import type { GeoJsonProperties } from './types.js'
 import { create, type UseSuperclusterOptions as UseSuperclusterOptions1 } from './use-supercluster.js'
-import { GeoJsonProperties } from './types.js'
-
-export type { UseSuperclusterReturnValue } from './use-supercluster.js'
 
 export type {
   Cluster,
-  SuperclusterInstance,
-  PointFeature,
   ClusterFeature,
-  PointFeatureProperties,
   PointClusterProperties,
+  PointFeature,
+  PointFeatureProperties,
+  SuperclusterInstance,
 } from './types.js'
+export type { UseSuperclusterReturnValue } from './use-supercluster.js'
 
 export type UseSuperclusterOptions<
   TFeatureProperties extends GeoJsonProperties,

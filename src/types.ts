@@ -1,7 +1,7 @@
 import type Supercluster from 'supercluster'
-import type { PointFeature, ClusterFeature } from 'supercluster'
+import type { ClusterFeature, PointFeature } from 'supercluster'
 
-export type { PointFeature, ClusterFeature }
+export type { ClusterFeature, PointFeature }
 
 export type GeoJsonProperties = Record<string, unknown>
 
@@ -45,10 +45,10 @@ type LngLatBounds = {
   toArray(): number[][]
 }
 
-type MapEventListener = (...args: any[]) => void
+type MapEventListener = (...args: unknown[]) => void
 
 export type RelMapRef = {
-  getBounds(): LngLatBounds
+  getBounds(): LngLatBounds | null
   getZoom(): number
   on(type: string, listener: MapEventListener): void
   off(type: string, listener?: MapEventListener): void

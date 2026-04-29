@@ -2,8 +2,9 @@
 logs
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+
+# pnpm
+.pnpm-store
 
 # Coverage
 lib-cov
@@ -16,15 +17,7 @@ node_modules
 # Cache
 .npm
 .eslintcache
-
-# Yarn
-.yarn/*
-!.yarn/patches
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/versions
-.pnp.*
+*.tsbuildinfo
 
 # IDE
 .vscode
@@ -39,3 +32,4 @@ node_modules
 
 # Artifacts
 dist
+example/dist
