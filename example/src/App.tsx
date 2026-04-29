@@ -121,7 +121,10 @@ export default function App() {
                   className="place-marker"
                   style={{ backgroundColor: place.color }}
                   type="button"
-                  onClick={() => setSelectedPlace(place)}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    setSelectedPlace(place)
+                  }}
                   aria-label={place.name}
                 />
               </Marker>
