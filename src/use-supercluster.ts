@@ -1,3 +1,4 @@
+import { DEV } from 'esm-env'
 import { type RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import Supercluster from 'supercluster'
 import type {
@@ -10,6 +11,8 @@ import type {
   SuperclusterOptions,
 } from './types.js'
 import { getMapState, isClustersShallowEqual, isEqual } from './utils.js'
+
+const UNSTABLE_FUNCTION_OPTION_WARNING_THRESHOLD = 3
 
 export type UseSuperclusterReturnValue<
   TFeatureProperties extends GeoJsonProperties,
@@ -33,6 +36,8 @@ type UseMap<T> = () => {
 }
 
 export function create<MapRef extends RelMapRef>(useMap: UseMap<MapRef>) {
+  const useSupercluster = DEV ? useSuperclusterFactoryWithWarnings : useSuperclusterFactory
+
   return function useReactMapGLSupercluster<
     TFeatureProperties extends GeoJsonProperties,
     TClusterProperties extends GeoJsonProperties,
@@ -41,7 +46,7 @@ export function create<MapRef extends RelMapRef>(useMap: UseMap<MapRef>) {
     options: UseSuperclusterOptions<MapRef, TFeatureProperties, TClusterProperties> = {},
   ): UseSuperclusterReturnValue<TFeatureProperties, TClusterProperties> {
     const map = useResolvedMapRef(options.mapRef)
-    const supercluster = useSuperclusterFactory(points, options)
+    const supercluster = useSupercluster(points, options)
 
     const [state, setState] = useState(() => {
       const mapState = map != null ? getMapState(map) : null
@@ -108,41 +113,98 @@ export function create<MapRef extends RelMapRef>(useMap: UseMap<MapRef>) {
     if (outerRef != null) return 'current' in outerRef ? (outerRef.current ?? null) : outerRef
     return maps.current ?? null
   }
+}
 
-  function useSuperclusterFactory<
-    TFeatureProperties extends GeoJsonProperties,
-    TClusterProperties extends GeoJsonProperties,
-  >(
-    points: Array<PointFeature<PointFeatureProperties<TFeatureProperties>>>,
-    _options: SuperclusterOptions<TFeatureProperties, TClusterProperties>,
-  ) {
-    // Memoize options
-    const nextOptions = pickOptions(_options)
-    const optionsRef = useRef(nextOptions)
-    if (!isEqual(optionsRef.current, nextOptions)) optionsRef.current = nextOptions
-    const options = optionsRef.current
+function useSuperclusterFactoryWithWarnings<
+  TFeatureProperties extends GeoJsonProperties,
+  TClusterProperties extends GeoJsonProperties,
+>(
+  points: Array<PointFeature<PointFeatureProperties<TFeatureProperties>>>,
+  options: SuperclusterOptions<TFeatureProperties, TClusterProperties>,
+) {
+  useWarnIfFunctionOptionChanges(options)
+  return useSuperclusterFactory(points, options)
+}
 
-    return useMemo(() => {
-      const instance = new Supercluster(options)
-      instance.load(points)
-      return instance
-    }, [points, options])
+function useSuperclusterFactory<
+  TFeatureProperties extends GeoJsonProperties,
+  TClusterProperties extends GeoJsonProperties,
+>(
+  points: Array<PointFeature<PointFeatureProperties<TFeatureProperties>>>,
+  _options: SuperclusterOptions<TFeatureProperties, TClusterProperties>,
+) {
+  // Memoize options
+  const nextOptions = pickOptions(_options)
+  const optionsRef = useRef(nextOptions)
+  if (!isEqual(optionsRef.current, nextOptions)) optionsRef.current = nextOptions
+  const options = optionsRef.current
+
+  return useMemo(() => {
+    const instance = new Supercluster(options)
+    instance.load(points)
+    return instance
+  }, [points, options])
+}
+
+function pickOptions<TFeatureProperties extends GeoJsonProperties, TClusterProperties extends GeoJsonProperties>(
+  options: SuperclusterOptions<TFeatureProperties, TClusterProperties>,
+) {
+  const {
+    minZoom = 0,
+    maxZoom = 16,
+    radius = 40,
+    minPoints = 2,
+    extent = 512,
+    nodeSize = 64,
+    generateId = false,
+    map,
+    reduce,
+  } = options
+  return { minZoom, maxZoom, radius, minPoints, extent, nodeSize, generateId, map, reduce }
+}
+
+function useWarnIfFunctionOptionChanges<
+  TFeatureProperties extends GeoJsonProperties,
+  TClusterProperties extends GeoJsonProperties,
+>(options: SuperclusterOptions<TFeatureProperties, TClusterProperties>): void {
+  const unstableOptionsRef = useRef({
+    changesCount: { map: 0, reduce: 0 },
+    options,
+    optionValues: { map: options.map, reduce: options.reduce },
+    warned: { map: false, reduce: false },
+  })
+
+  const current = unstableOptionsRef.current
+  if (current.options === options) {
+    return
   }
 
-  function pickOptions<TFeatureProperties extends GeoJsonProperties, TClusterProperties extends GeoJsonProperties>(
-    options: SuperclusterOptions<TFeatureProperties, TClusterProperties>,
-  ) {
-    const {
-      minZoom = 0,
-      maxZoom = 16,
-      radius = 40,
-      minPoints = 2,
-      extent = 512,
-      nodeSize = 64,
-      generateId = false,
-      map,
-      reduce,
-    } = options
-    return { minZoom, maxZoom, radius, minPoints, extent, nodeSize, generateId, map, reduce }
+  current.changesCount = {
+    map: getNextFunctionOptionChangesCount(current.optionValues.map, options.map, current.changesCount.map),
+    reduce: getNextFunctionOptionChangesCount(current.optionValues.reduce, options.reduce, current.changesCount.reduce),
   }
+
+  warnIfFunctionOptionChanged('map', current.changesCount.map, current.warned.map)
+  warnIfFunctionOptionChanged('reduce', current.changesCount.reduce, current.warned.reduce)
+
+  current.warned = {
+    map: current.warned.map || current.changesCount.map >= UNSTABLE_FUNCTION_OPTION_WARNING_THRESHOLD,
+    reduce: current.warned.reduce || current.changesCount.reduce >= UNSTABLE_FUNCTION_OPTION_WARNING_THRESHOLD,
+  }
+  current.optionValues = { map: options.map, reduce: options.reduce }
+  current.options = options
+}
+
+function getNextFunctionOptionChangesCount(prev: unknown, next: unknown, currentCount: number): number {
+  if (prev === next || typeof prev !== 'function' || typeof next !== 'function') return 0
+  return currentCount + 1
+}
+
+function warnIfFunctionOptionChanged(name: 'map' | 'reduce', changesCount: number, alreadyWarned: boolean): void {
+  if (changesCount < UNSTABLE_FUNCTION_OPTION_WARNING_THRESHOLD || alreadyWarned) return
+
+  console.warn(
+    `react-map-gl-supercluster: option "${name}" changed between renders. ` +
+      'This recreates the Supercluster index. Wrap it in useCallback or define it outside the component.',
+  )
 }

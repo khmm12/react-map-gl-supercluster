@@ -8,10 +8,10 @@
       "path": "./tsconfig.test.json"
     },
     {
-      "path": "./example/tsconfig.json"
+      "path": "./tsconfig.node.json"
     },
     {
-      "path": "./example/tsconfig.node.json"
+      "path": "./example/tsconfig.json"
     }
   ]
 }

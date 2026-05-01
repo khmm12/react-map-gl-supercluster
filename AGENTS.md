@@ -20,11 +20,12 @@ Use pnpm via Corepack.
 pnpm install
 pnpm lint
 pnpm typecheck
+pnpm test
 pnpm build
 pnpm example
 ```
 
-Run `pnpm lint` and `pnpm typecheck` before handing off changes.
+Run `pnpm check` before handing off changes.
 
 ## Style
 

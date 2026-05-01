@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   check:
-    name: Typecheck and lint
+    name: Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,7 +23,5 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Typecheck
-        run: pnpm typecheck
-      - name: Lint
-        run: pnpm lint
+      - name: Check
+        run: pnpm check

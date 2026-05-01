@@ -27,10 +27,8 @@ jobs:
           registry-url: https://registry.npmjs.org
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Typecheck
-        run: pnpm typecheck
-      - name: Lint
-        run: pnpm lint
+      - name: Check
+        run: pnpm check
       - name: Build
         run: pnpm build
       - name: Publish to npm
