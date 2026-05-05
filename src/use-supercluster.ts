@@ -14,14 +14,22 @@ import { getMapState, isClustersShallowEqual, isEqual } from './utils.js'
 
 const UNSTABLE_FUNCTION_OPTION_WARNING_THRESHOLD = 3
 
+/** Values returned by `useSupercluster`. */
 export type UseSuperclusterReturnValue<
   TFeatureProperties extends GeoJsonProperties,
   TClusterProperties extends GeoJsonProperties,
 > = {
+  /** Clusters for the current map bounds and rounded zoom. */
   clusters: Array<Cluster<TFeatureProperties, TClusterProperties>>
+  /** Loaded index for advanced `supercluster` queries. */
   supercluster: SuperclusterInstance<TFeatureProperties, TClusterProperties>
 }
 
+/**
+ * Hook options.
+ *
+ * Pass `mapRef` when the map is outside `react-map-gl` context or when several maps are mounted.
+ */
 export type UseSuperclusterOptions<
   MapRef extends RelMapRef,
   TFeatureProperties extends GeoJsonProperties,
@@ -35,6 +43,9 @@ type UseMap<T> = () => {
   current?: T
 }
 
+/**
+ * Creates a renderer-specific `useSupercluster` hook.
+ */
 export function create<MapRef extends RelMapRef>(useMap: UseMap<MapRef>) {
   const useSupercluster = DEV ? useSuperclusterFactoryWithWarnings : useSuperclusterFactory
 
