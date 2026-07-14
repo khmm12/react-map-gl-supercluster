@@ -33,6 +33,16 @@ export type UseSuperclusterOptions<
   TClusterProperties extends GeoJsonProperties,
 > = SuperclusterOptions<TFeatureProperties, TClusterProperties> & {
   mapRef?: MapRef | RefObject<MapRef | null | undefined> | undefined | null
+  /**
+   * Extra viewport fraction (per side) included when querying clusters.
+   *
+   * Markers near the edges don't pop in and out, and small pans inside the
+   * padded area skip recomputation entirely. The queried area grows as
+   * `(1 + 2 * padding)²`, so large values render more off-screen markers.
+   *
+   * @default 0
+   */
+  boundsPadding?: number
 }
 
 type UseMap<T> = () => {
@@ -53,7 +63,7 @@ export function create<MapRef extends MapLike>(useMap: UseMap<MapRef>) {
   ): UseSuperclusterReturnValue<TFeatureProperties, TClusterProperties> {
     const map = useResolvedMap(options.mapRef)
     const supercluster = useSuperclusterIndex(points, options)
-    return useClusters(map, supercluster)
+    return useClusters(map, supercluster, options.boundsPadding)
   }
 
   function useResolvedMap(mapRef?: MapRef | RefObject<MapRef | null | undefined> | null | undefined): MapRef | null {

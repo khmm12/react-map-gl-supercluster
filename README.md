@@ -196,6 +196,7 @@ Object which contains 2 fields:
 | Option     | Default  | Description                                                                                                                                                                          |
 | ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | mapRef     | Optional | `MapRef` instance or React ref. Optional when the hook is rendered inside `Map`.                                                                                                      |
+| boundsPadding | 0     | Extra viewport fraction (per side) included when querying clusters. Markers near the edges don't pop in and out, and small pans skip recomputation. Larger values render more off-screen markers. |
 | minZoom    | 0        | Minimum zoom level at which clusters are generated.                                                                                                                                  |
 | maxZoom    | 16       | Maximum zoom level at which clusters are generated.                                                                                                                                  |
 | minPoints  | 2        | Minimum number of points to form a cluster.                                                                                                                                          |

@@ -59,6 +59,7 @@ export default function App() {
 
   const { supercluster, clusters } = useSupercluster<PlaceFeatureProperties, PlaceClusterProperties>(points, {
     mapRef: map,
+    boundsPadding: 0.2,
     map: mapFeature,
     reduce: reduceCluster,
   })

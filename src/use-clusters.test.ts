@@ -1,13 +1,17 @@
 import React, { act } from 'react'
 import { renderToString } from 'react-dom/server'
 import Supercluster from 'supercluster'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { pointFeature, renderHook, type TestClusterProperties, TestMap, type TestProperties } from './test-helpers.js'
 import type { PointFeature, SuperclusterInstance } from './types.js'
 import { useClusters } from './use-clusters.js'
 
 type Index = SuperclusterInstance<TestProperties, TestClusterProperties>
-type Props = { map: TestMap | null; index: Index }
+type Props = { map: TestMap | null; index: Index; boundsPadding?: number }
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
 
 const worldMap = () =>
   new TestMap([
@@ -162,6 +166,132 @@ describe('useClusters', () => {
     expect(view.result.clusters).toHaveLength(1)
   })
 
+  describe('boundsPadding', () => {
+    it('includes clusters slightly outside the viewport', async () => {
+      const map = new TestMap([
+        [-10, -10],
+        [10, 10],
+      ])
+      const index = createIndex([pointFeature(1, [12, 12])])
+      const view = await renderClusters({ boundsPadding: 0.5, index, map })
+
+      expect(view.result.clusters).toHaveLength(1)
+    })
+
+    it('does not include clusters outside the viewport without padding', async () => {
+      const map = new TestMap([
+        [-10, -10],
+        [10, 10],
+      ])
+      const index = createIndex([pointFeature(1, [12, 12])])
+      const view = await renderClusters({ index, map })
+
+      expect(view.result.clusters).toEqual([])
+    })
+
+    it('skips recomputation while the viewport stays inside the padded area', async () => {
+      const map = new TestMap([
+        [-10, -10],
+        [10, 10],
+      ])
+      const index = createIndex([pointFeature(1, [0, 0])])
+      const getClusters = vi.spyOn(index, 'getClusters')
+      const view = await renderClusters({ boundsPadding: 0.5, index, map })
+      const callsAfterMount = getClusters.mock.calls.length
+      const previousResult = view.result
+
+      await act(async () => {
+        map.setView(
+          [
+            [-12, -12],
+            [8, 8],
+          ],
+          0.2,
+        )
+        map.emit('move')
+      })
+
+      expect(view.result).toBe(previousResult)
+      expect(getClusters.mock.calls.length).toBe(callsAfterMount)
+    })
+
+    it('recomputes when the viewport leaves the padded area', async () => {
+      const map = new TestMap([
+        [-10, -10],
+        [10, 10],
+      ])
+      const index = createIndex([pointFeature(1, [40, 40])])
+      const getClusters = vi.spyOn(index, 'getClusters')
+      const view = await renderClusters({ boundsPadding: 0.5, index, map })
+      expect(view.result.clusters).toEqual([])
+      const callsAfterMount = getClusters.mock.calls.length
+
+      await act(async () => {
+        map.setView(
+          [
+            [25, 25],
+            [45, 45],
+          ],
+          0,
+        )
+        map.emit('move')
+      })
+
+      expect(getClusters.mock.calls.length).toBeGreaterThan(callsAfterMount)
+      expect(view.result.clusters).toHaveLength(1)
+    })
+
+    it('recomputes when the rounded zoom changes inside the padded area', async () => {
+      const map = new TestMap([
+        [-10, -10],
+        [10, 10],
+      ])
+      const index = createIndex([pointFeature(1, [0, 0]), pointFeature(2, [0.01, 0.01])])
+      const getClusters = vi.spyOn(index, 'getClusters')
+      const view = await renderClusters({ boundsPadding: 0.5, index, map })
+      const callsAfterMount = getClusters.mock.calls.length
+
+      await act(async () => {
+        map.setView(
+          [
+            [-9, -9],
+            [9, 9],
+          ],
+          0.8,
+        )
+        map.emit('move')
+      })
+
+      expect(getClusters.mock.calls.length).toBeGreaterThan(callsAfterMount)
+      expect(view.result.clusters).toHaveLength(1)
+    })
+
+    it('always requeries without padding, even when the viewport shrinks', async () => {
+      const map = new TestMap([
+        [-10, -10],
+        [10, 10],
+      ])
+      const index = createIndex([pointFeature(1, [0, 0])])
+      const getClusters = vi.spyOn(index, 'getClusters')
+      const view = await renderClusters({ index, map })
+      const callsAfterMount = getClusters.mock.calls.length
+
+      await act(async () => {
+        map.setView(
+          [
+            [-5, -5],
+            [5, 5],
+          ],
+          0.2,
+        )
+        map.emit('move')
+      })
+
+      expect(view.result.clusters).toHaveLength(1)
+      expect(getClusters.mock.calls.length).toBeGreaterThan(callsAfterMount)
+    })
+  })
+
   it('renders empty clusters on the server even when a map is provided', () => {
     const index = createIndex([pointFeature(1, [0, 0]), pointFeature(2, [0.01, 0.01])])
     const rendered: { result: ReturnType<typeof useClusters<TestProperties, TestClusterProperties>> | null } = {
@@ -181,7 +311,7 @@ describe('useClusters', () => {
 })
 
 function renderClusters(props: Props) {
-  return renderHook(({ map, index }: Props) => useClusters(map, index), props)
+  return renderHook(({ map, index, boundsPadding }: Props) => useClusters(map, index, boundsPadding), props)
 }
 
 function createIndex(points: Array<PointFeature<TestProperties>>): Index {

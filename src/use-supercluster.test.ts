@@ -96,6 +96,20 @@ describe('create', () => {
     expect(view.result.clusters[0]?.properties).toMatchObject({ cluster: true, sum: 5 })
   })
 
+  it('passes boundsPadding through to clustering', async () => {
+    const map = new TestMap([
+      [-10, -10],
+      [10, 10],
+    ])
+    const useSupercluster = create(() => ({ current: map }))
+    const view = await renderUseSupercluster(useSupercluster, {
+      options: { boundsPadding: 0.5 },
+      points: [pointFeature(1, [12, 12])],
+    })
+
+    expect(view.result.clusters).toHaveLength(1)
+  })
+
   it('works under React StrictMode', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
     const map = new TestMap([
