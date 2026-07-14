@@ -1,4 +1,5 @@
-import { act } from 'react'
+import React, { act } from 'react'
+import { renderToString } from 'react-dom/server'
 import Supercluster from 'supercluster'
 import { describe, expect, it } from 'vitest'
 import { pointFeature, renderHook, type TestClusterProperties, TestMap, type TestProperties } from './test-helpers.js'
@@ -159,6 +160,23 @@ describe('useClusters', () => {
     await view.rerender({ map: worldMap(), index })
 
     expect(view.result.clusters).toHaveLength(1)
+  })
+
+  it('renders empty clusters on the server even when a map is provided', () => {
+    const index = createIndex([pointFeature(1, [0, 0]), pointFeature(2, [0.01, 0.01])])
+    const rendered: { result: ReturnType<typeof useClusters<TestProperties, TestClusterProperties>> | null } = {
+      result: null,
+    }
+
+    function ServerComponent(): null {
+      rendered.result = useClusters(worldMap(), index)
+      return null
+    }
+
+    renderToString(React.createElement(ServerComponent))
+
+    expect(rendered.result?.clusters).toEqual([])
+    expect(rendered.result?.supercluster).toBe(index)
   })
 })
 
