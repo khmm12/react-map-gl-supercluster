@@ -1,6 +1,6 @@
 import { type MapRef, useMap } from 'react-map-gl/mapbox'
 import type { GeoJsonProperties } from './types.js'
-import { create, type UseSuperclusterOptions as UseSuperclusterOptions1 } from './use-supercluster.js'
+import { type UseSuperclusterOptions as BaseUseSuperclusterOptions, create } from './use-supercluster.js'
 
 export type {
   Cluster,
@@ -16,7 +16,7 @@ export type { UseSuperclusterReturnValue } from './use-supercluster.js'
 export type UseSuperclusterOptions<
   TFeatureProperties extends GeoJsonProperties,
   TClusterProperties extends GeoJsonProperties,
-> = UseSuperclusterOptions1<MapRef, TFeatureProperties, TClusterProperties>
+> = BaseUseSuperclusterOptions<MapRef, TFeatureProperties, TClusterProperties>
 
 /**
  * React hook that clusters points for the current Mapbox map viewport.

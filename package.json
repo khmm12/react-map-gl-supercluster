@@ -75,7 +75,7 @@
     "@typescript/native": "npm:typescript@^7.0.2",
     "@vitejs/plugin-react": "^6.0.3",
     "@vitest/coverage-v8": "^4.1.10",
-    "jsdom": "^29.1.1",
+    "happy-dom": "^20.10.6",
     "mapbox-gl": "^3.26.0",
     "maplibre-gl": "^5.24.0",
     "publint": "^0.3.21",
