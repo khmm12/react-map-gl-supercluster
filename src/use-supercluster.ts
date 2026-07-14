@@ -1,4 +1,3 @@
-import type { RefObject } from 'react'
 import type {
   Cluster,
   GeoJsonProperties,
@@ -32,7 +31,7 @@ export type UseSuperclusterOptions<
   TFeatureProperties extends GeoJsonProperties,
   TClusterProperties extends GeoJsonProperties,
 > = SuperclusterOptions<TFeatureProperties, TClusterProperties> & {
-  mapRef?: MapRef | RefObject<MapRef | null | undefined> | undefined | null
+  mapRef?: MapRef | undefined | null
   /**
    * Extra viewport fraction (per side) included when querying clusters.
    *
@@ -66,9 +65,8 @@ export function create<MapRef extends MapLike>(useMap: UseMap<MapRef>) {
     return useClusters(map, supercluster, options.boundsPadding)
   }
 
-  function useResolvedMap(mapRef?: MapRef | RefObject<MapRef | null | undefined> | null | undefined): MapRef | null {
+  function useResolvedMap(mapRef?: MapRef | null | undefined): MapRef | null {
     const maps = useMap()
-    if (mapRef != null) return 'current' in mapRef ? (mapRef.current ?? null) : mapRef
-    return maps.current ?? null
+    return mapRef ?? maps.current ?? null
   }
 }

@@ -34,7 +34,7 @@ There is no root entrypoint in v3+ because `react-map-gl` v8 no longer has a def
 ## Example usage
 
 ```tsx
-import { type ReactElement, useMemo, useRef } from 'react'
+import { type ReactElement, useMemo, useState } from 'react'
 import Map, { type MapRef, Marker } from 'react-map-gl/mapbox'
 import { isCluster, type PointFeature, useSupercluster } from 'react-map-gl-supercluster/mapbox'
 
@@ -47,26 +47,26 @@ type ItemProperties = { item: Item }
 type ItemClusterProperties = { items: Item[] }
 
 function MyAwesomeMap({ items }: { items: Item[] }): ReactElement {
-  const mapRef = useRef<MapRef | null>(null)
+  const [map, setMap] = useState<MapRef | null>(null)
 
   const points = useMemo(() => createPoints(items), [items])
 
   const { supercluster, clusters } = useSupercluster(points, {
-    mapRef,
+    mapRef: map,
     map: mapFeature,
     reduce: reduceCluster,
   })
 
   const expandCluster = (clusterId: number, coordinates: { longitude: number; latitude: number }) => {
     const zoom = supercluster.getClusterExpansionZoom(clusterId)
-    mapRef.current?.easeTo({
+    map?.easeTo({
       center: [coordinates.longitude, coordinates.latitude],
       zoom,
     })
   }
 
   return (
-    <Map ref={mapRef}>
+    <Map ref={setMap}>
       {clusters.map((cluster) => {
         const [longitude, latitude] = cluster.geometry.coordinates
 
@@ -189,7 +189,7 @@ Object which contains 2 fields:
 
 | Option     | Default  | Description                                                                                                                                                                          |
 | ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| mapRef     | Optional | `MapRef` instance or React ref. Optional when the hook is rendered inside `Map`.                                                                                                      |
+| mapRef     | Optional | `MapRef` instance. Optional when the hook is rendered inside `Map`.                                                                                                                    |
 | boundsPadding | 0     | Extra viewport fraction (per side) included when querying clusters. Markers near the edges don't pop in and out, and small pans skip recomputation. Larger values render more off-screen markers. |
 | minZoom    | 0        | Minimum zoom level at which clusters are generated.                                                                                                                                  |
 | maxZoom    | 16       | Maximum zoom level at which clusters are generated.                                                                                                                                  |

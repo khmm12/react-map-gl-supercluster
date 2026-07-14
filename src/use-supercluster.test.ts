@@ -1,4 +1,3 @@
-import type { RefObject } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { pointFeature, renderHook, type TestClusterProperties, TestMap, type TestProperties } from './test-helpers.js'
 import type { PointFeature } from './types.js'
@@ -53,24 +52,10 @@ describe('create', () => {
       expect(explicitMap.listenerCount('move')).toBe(1)
     })
 
-    it('accepts an explicit React ref', async () => {
-      const map = new TestMap([
-        [-10, -10],
-        [10, 10],
-      ])
+    it('treats an explicit null mapRef as unavailable map', async () => {
       const useSupercluster = create<TestMap>(() => ({}))
       const view = await renderUseSupercluster(useSupercluster, {
-        options: { mapRef: { current: map } as RefObject<TestMap> },
-        points: [pointFeature(1, [0, 0])],
-      })
-
-      expect(view.result.clusters).toHaveLength(1)
-    })
-
-    it('treats an empty explicit React ref as unavailable map', async () => {
-      const useSupercluster = create<TestMap>(() => ({}))
-      const view = await renderUseSupercluster(useSupercluster, {
-        options: { mapRef: { current: null } as RefObject<TestMap | null> },
+        options: { mapRef: null },
         points: [pointFeature(1, [0, 0])],
       })
 
