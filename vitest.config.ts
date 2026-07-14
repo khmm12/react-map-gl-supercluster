@@ -3,7 +3,7 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   test: {
     coverage: {
-      exclude: ['src/**/*.test.ts', 'src/test-helpers.ts'],
+      exclude: ['src/**/*.test.ts', 'src/**/*.bench.ts', 'src/test-helpers.ts'],
       include: ['src/**/*.ts'],
       thresholds: {
         branches: 100,

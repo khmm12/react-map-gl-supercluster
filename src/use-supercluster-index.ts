@@ -38,7 +38,7 @@ function useSuperclusterIndexImpl<
   TFeatureProperties extends GeoJsonProperties,
   TClusterProperties extends GeoJsonProperties,
 >(
-  points: Array<PointFeature<PointFeatureProperties<TFeatureProperties>>>,
+  outerPoints: Array<PointFeature<PointFeatureProperties<TFeatureProperties>>>,
   outerOptions: SuperclusterOptions<TFeatureProperties, TClusterProperties>,
 ) {
   const nextOptions = normalizeOptions(outerOptions)
@@ -46,11 +46,25 @@ function useSuperclusterIndexImpl<
   if (!isOptionsEqual(optionsRef.current, nextOptions)) optionsRef.current = nextOptions
   const options = optionsRef.current
 
+  // A new array with the same features must not trigger an O(n log n) index rebuild
+  const pointsRef = useRef(outerPoints)
+  if (!isPointsShallowEqual(pointsRef.current, outerPoints)) pointsRef.current = outerPoints
+  const points = pointsRef.current
+
   return useMemo(() => {
     const index = new Supercluster(options)
     index.load(points)
     return index
   }, [points, options])
+}
+
+function isPointsShallowEqual<T>(a: readonly T[], b: readonly T[]): boolean {
+  if (a === b) return true
+  if (a.length !== b.length) return false
+  for (let i = 0; i < a.length; i += 1) {
+    if (a[i] !== b[i]) return false
+  }
+  return true
 }
 
 function normalizeOptions<TFeatureProperties extends GeoJsonProperties, TClusterProperties extends GeoJsonProperties>(

@@ -38,6 +38,25 @@ describe('useSuperclusterIndex', () => {
     expect(view.result).not.toBe(firstIndex)
   })
 
+  it('rebuilds the index when a feature is replaced', async () => {
+    const view = await renderIndex({ points: [pointFeature(1, [0, 0]), pointFeature(2, [1, 1])], options: {} })
+    const firstIndex = view.result
+
+    await view.rerender({ points: [pointFeature(1, [0, 0]), pointFeature(2, [2, 2])], options: {} })
+
+    expect(view.result).not.toBe(firstIndex)
+  })
+
+  it('keeps the index when a new array contains the same features', async () => {
+    const points = [pointFeature(1, [0, 0]), pointFeature(2, [1, 1])]
+    const view = await renderIndex({ points, options: {} })
+    const firstIndex = view.result
+
+    await view.rerender({ points: [...points], options: {} })
+
+    expect(view.result).toBe(firstIndex)
+  })
+
   it('rebuilds the index when options change', async () => {
     const points = [pointFeature(1, [0, 0])]
     const view = await renderIndex({ points, options: { radius: 40 } })

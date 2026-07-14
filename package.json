@@ -38,7 +38,8 @@
     "check": "pnpm lint && pnpm typecheck && pnpm test",
     "lint": "biome check",
     "test": "vitest run --coverage",
-    "typecheck": "tsc -b --pretty --force"
+    "typecheck": "tsc -b --pretty --force",
+    "bench": "vitest bench --run"
   },
   "dependencies": {
     "@types/supercluster": "^7.1.3",
