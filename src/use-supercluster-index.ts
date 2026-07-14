@@ -2,6 +2,7 @@ import { DEV } from 'esm-env'
 import { useMemo, useRef } from 'react'
 import Supercluster from 'supercluster'
 import type { GeoJsonProperties, PointFeature, SuperclusterInstance, SuperclusterOptions } from './types.js'
+import { useWarnOnReservedClusterKey } from './warn-reserved-cluster-key.js'
 import { useWarnOnUnstableFunctionOptions } from './warn-unstable-options.js'
 
 type UseSuperclusterIndex = <
@@ -24,6 +25,7 @@ function useSuperclusterIndexWithWarnings<
   points: Array<PointFeature<TFeatureProperties>>,
   options: SuperclusterOptions<TFeatureProperties, TClusterProperties>,
 ) {
+  useWarnOnReservedClusterKey(points)
   useWarnOnUnstableFunctionOptions(options)
   return useSuperclusterIndexImpl(points, options)
 }
