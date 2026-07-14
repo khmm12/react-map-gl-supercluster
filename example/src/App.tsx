@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react'
 import MapComponent, { type MapRef, Marker, NavigationControl, Popup } from 'react-map-gl/maplibre'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import {
-  type Cluster,
+  isCluster,
   type PointClusterProperties,
   type PointFeature,
   type PointFeatureProperties,
@@ -18,8 +18,6 @@ type PlaceClusterProperties = {
   places: Place[]
   totalAttendees: number
 }
-
-type PlaceCluster = Cluster<PlaceFeatureProperties, PlaceClusterProperties>
 
 const mapStyle = 'https://demotiles.maplibre.org/style.json'
 
@@ -162,8 +160,4 @@ export default function App() {
       </aside>
     </main>
   )
-}
-
-function isCluster(cluster: PlaceCluster): cluster is Extract<PlaceCluster, { properties: { cluster: true } }> {
-  return cluster.properties.cluster === true
 }

@@ -2,6 +2,7 @@ import { type MapRef, useMap } from 'react-map-gl/maplibre'
 import type { GeoJsonProperties } from './types.js'
 import { type UseSuperclusterOptions as BaseUseSuperclusterOptions, create } from './use-supercluster.js'
 
+export { isCluster } from './is-cluster.js'
 export type {
   Cluster,
   ClusterFeature,
