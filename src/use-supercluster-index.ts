@@ -1,20 +1,14 @@
 import { DEV } from 'esm-env'
 import { useMemo, useRef } from 'react'
 import Supercluster from 'supercluster'
-import type {
-  GeoJsonProperties,
-  PointFeature,
-  PointFeatureProperties,
-  SuperclusterInstance,
-  SuperclusterOptions,
-} from './types.js'
+import type { GeoJsonProperties, PointFeature, SuperclusterInstance, SuperclusterOptions } from './types.js'
 import { useWarnOnUnstableFunctionOptions } from './warn-unstable-options.js'
 
 type UseSuperclusterIndex = <
   TFeatureProperties extends GeoJsonProperties,
   TClusterProperties extends GeoJsonProperties,
 >(
-  points: Array<PointFeature<PointFeatureProperties<TFeatureProperties>>>,
+  points: Array<PointFeature<TFeatureProperties>>,
   options: SuperclusterOptions<TFeatureProperties, TClusterProperties>,
 ) => SuperclusterInstance<TFeatureProperties, TClusterProperties>
 
@@ -27,7 +21,7 @@ function useSuperclusterIndexWithWarnings<
   TFeatureProperties extends GeoJsonProperties,
   TClusterProperties extends GeoJsonProperties,
 >(
-  points: Array<PointFeature<PointFeatureProperties<TFeatureProperties>>>,
+  points: Array<PointFeature<TFeatureProperties>>,
   options: SuperclusterOptions<TFeatureProperties, TClusterProperties>,
 ) {
   useWarnOnUnstableFunctionOptions(options)
@@ -38,7 +32,7 @@ function useSuperclusterIndexImpl<
   TFeatureProperties extends GeoJsonProperties,
   TClusterProperties extends GeoJsonProperties,
 >(
-  outerPoints: Array<PointFeature<PointFeatureProperties<TFeatureProperties>>>,
+  outerPoints: Array<PointFeature<TFeatureProperties>>,
   outerOptions: SuperclusterOptions<TFeatureProperties, TClusterProperties>,
 ) {
   const nextOptions = normalizeOptions(outerOptions)

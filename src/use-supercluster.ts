@@ -55,10 +55,10 @@ type UseMap<T> = () => {
  */
 export function create<MapRef extends MapLike>(useMap: UseMap<MapRef>) {
   return function useSupercluster<
-    TFeatureProperties extends GeoJsonProperties,
+    TFeatureProperties extends PointFeatureProperties,
     TClusterProperties extends GeoJsonProperties,
   >(
-    points: Array<PointFeature<PointFeatureProperties<TFeatureProperties>>>,
+    points: Array<PointFeature<TFeatureProperties>>,
     options: UseSuperclusterOptions<MapRef, TFeatureProperties, TClusterProperties> = {},
   ): UseSuperclusterReturnValue<TFeatureProperties, TClusterProperties> {
     const map = useResolvedMap(options.mapRef)

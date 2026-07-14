@@ -142,7 +142,7 @@ describe('useClusters', () => {
 
     expect(view.result.supercluster).toBe(nextIndex)
     expect(view.result.clusters).toHaveLength(1)
-    expect(view.result.clusters[0]?.properties).toMatchObject({ cluster: false })
+    expect(view.result.clusters[0]?.properties).toEqual({ value: 3 })
     expect(map.listenerCount('move')).toBe(1)
   })
 
@@ -299,7 +299,7 @@ describe('useClusters', () => {
     }
 
     function ServerComponent(): null {
-      rendered.result = useClusters(worldMap(), index)
+      rendered.result = useClusters<TestProperties, TestClusterProperties>(worldMap(), index)
       return null
     }
 

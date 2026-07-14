@@ -6,7 +6,6 @@ export { isCluster } from './is-cluster.js'
 export type {
   Cluster,
   ClusterFeature,
-  PointClusterProperties,
   PointFeature,
   PointFeatureProperties,
   SuperclusterInstance,

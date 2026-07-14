@@ -9,27 +9,20 @@ export type GeoJsonProperties = Record<string, unknown>
 /**
  * Point properties accepted by `useSupercluster`.
  *
- * @example
- * ```ts
- * type CityPoint = PointFeatureProperties<{ name: string; population: number }>
- * ```
- */
-export type PointFeatureProperties<TProperties extends GeoJsonProperties> = { cluster: false } & TProperties
-
-/**
- * User-defined aggregate properties for generated cluster features.
+ * The `cluster` key is reserved: generated clusters use it as a discriminator,
+ * so input points must not define it. Use `isCluster` to tell features apart.
  *
  * @example
  * ```ts
- * type CityCluster = PointClusterProperties<{ population: number }>
+ * type CityPoint = { name: string; population: number } // satisfies PointFeatureProperties
  * ```
  */
-export type PointClusterProperties<TProperties extends GeoJsonProperties> = TProperties
+export type PointFeatureProperties = GeoJsonProperties & { cluster?: never }
 
 /** A feature returned from `useSupercluster`: either an original point or a generated cluster. */
 export type Cluster<TFeatureProperties extends GeoJsonProperties, TClusterProperties extends GeoJsonProperties> =
-  | PointFeature<PointFeatureProperties<TFeatureProperties>>
-  | ClusterFeature<PointClusterProperties<TClusterProperties>>
+  | PointFeature<TFeatureProperties>
+  | ClusterFeature<TClusterProperties>
 
 /**
  * Loaded `supercluster` instance returned by the hook.
@@ -44,7 +37,7 @@ export type Cluster<TFeatureProperties extends GeoJsonProperties, TClusterProper
 export type SuperclusterInstance<
   TFeatureProperties extends GeoJsonProperties,
   TClusterProperties extends GeoJsonProperties,
-> = Omit<Supercluster<PointFeatureProperties<TFeatureProperties>, PointClusterProperties<TClusterProperties>>, 'load'>
+> = Omit<Supercluster<TFeatureProperties, TClusterProperties>, 'load'>
 
 /**
  * Maps point properties to the aggregate properties used by clusters.
@@ -64,7 +57,7 @@ export type SuperclusterInstance<
 export type MapFeatureToCluster<
   TFeatureProperties extends GeoJsonProperties,
   TClusterProperties extends GeoJsonProperties,
-> = (feature: PointFeatureProperties<TFeatureProperties>) => PointClusterProperties<TClusterProperties>
+> = (feature: TFeatureProperties) => TClusterProperties
 
 /**
  * Merges aggregate properties while building clusters.
@@ -79,8 +72,8 @@ export type MapFeatureToCluster<
  * ```
  */
 export type ReduceCluster<TClusterProperties extends GeoJsonProperties> = (
-  memo: PointClusterProperties<TClusterProperties>,
-  feature: PointClusterProperties<TClusterProperties>,
+  memo: TClusterProperties,
+  feature: TClusterProperties,
 ) => void
 
 /**

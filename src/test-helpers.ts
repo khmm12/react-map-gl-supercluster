@@ -4,14 +4,14 @@ import type { MapLike, PointFeature } from './types.js'
 
 ;(globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 
-export type TestProperties = { cluster: false; value: number }
+export type TestProperties = { value: number }
 export type TestClusterProperties = { sum: number }
 
 export function pointFeature(id: number, coordinates: number[], value = id): PointFeature<TestProperties> {
   return {
     geometry: { coordinates, type: 'Point' },
     id,
-    properties: { cluster: false, value },
+    properties: { value },
     type: 'Feature',
   }
 }
