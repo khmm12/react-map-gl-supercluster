@@ -1,11 +1,28 @@
 import { describe, expect, it } from 'vitest'
 import type { PointFeature, RelMapRef } from './types.js'
-import { getMapState, isClustersShallowEqual, isEqual } from './utils.js'
+import { getMapState, isClustersShallowEqual, isMapStateEqual } from './utils.js'
 
-describe('isEqual', () => {
-  it('compares values structurally', () => {
-    expect(isEqual({ a: [1, 2] }, { a: [1, 2] })).toBe(true)
-    expect(isEqual({ a: [1, 2] }, { a: [2, 1] })).toBe(false)
+describe('isMapStateEqual', () => {
+  it('accepts equal map states', () => {
+    expect(isMapStateEqual({ bounds: [-10, -20, 10, 20], zoom: 4 }, { bounds: [-10, -20, 10, 20], zoom: 4 })).toBe(true)
+  })
+
+  it('rejects different bounds', () => {
+    expect(isMapStateEqual({ bounds: [-10, -20, 10, 20], zoom: 4 }, { bounds: [-10, -20, 10, 21], zoom: 4 })).toBe(
+      false,
+    )
+  })
+
+  it('rejects different zoom', () => {
+    expect(isMapStateEqual({ bounds: [-10, -20, 10, 20], zoom: 4 }, { bounds: [-10, -20, 10, 20], zoom: 5 })).toBe(
+      false,
+    )
+  })
+
+  it('handles null', () => {
+    expect(isMapStateEqual(null, null)).toBe(true)
+    expect(isMapStateEqual(null, { bounds: [-10, -20, 10, 20], zoom: 4 })).toBe(false)
+    expect(isMapStateEqual({ bounds: [-10, -20, 10, 20], zoom: 4 }, null)).toBe(false)
   })
 })
 
@@ -42,6 +59,10 @@ describe('isClustersShallowEqual', () => {
   it('rejects features with different point geometries', () => {
     expect(isClustersShallowEqual([point], [pointFeature(1, [20, 10])])).toBe(false)
   })
+
+  it('rejects features with coordinates of different length', () => {
+    expect(isClustersShallowEqual([point], [pointFeature(1, [10, 20, 5])])).toBe(false)
+  })
 })
 
 describe('getMapState', () => {
@@ -64,7 +85,7 @@ describe('getMapState', () => {
   })
 })
 
-function pointFeature(id: number, coordinates: [number, number]): PointFeature<{ cluster: false }> {
+function pointFeature(id: number, coordinates: number[]): PointFeature<{ cluster: false }> {
   return {
     geometry: { coordinates, type: 'Point' },
     id,

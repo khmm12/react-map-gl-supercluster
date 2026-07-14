@@ -10,7 +10,7 @@ import type {
   SuperclusterInstance,
   SuperclusterOptions,
 } from './types.js'
-import { getMapState, isClustersShallowEqual, isEqual } from './utils.js'
+import { getMapState, isClustersShallowEqual, isMapStateEqual } from './utils.js'
 
 const UNSTABLE_FUNCTION_OPTION_WARNING_THRESHOLD = 3
 
@@ -94,7 +94,7 @@ export function create<MapRef extends RelMapRef>(useMap: UseMap<MapRef>) {
           }
 
           // Map state has changed, but points stay the same
-          if (!isEqual(current.mapState, nextMapState)) {
+          if (!isMapStateEqual(current.mapState, nextMapState)) {
             const nextClusters = supercluster.getClusters(nextMapState.bounds, nextMapState.zoom)
 
             // Clusters might stay the same, avoid redundant re-renders
@@ -147,7 +147,7 @@ function useSuperclusterFactory<
   // Memoize options
   const nextOptions = pickOptions(_options)
   const optionsRef = useRef(nextOptions)
-  if (!isEqual(optionsRef.current, nextOptions)) optionsRef.current = nextOptions
+  if (!isOptionsEqual(optionsRef.current, nextOptions)) optionsRef.current = nextOptions
   const options = optionsRef.current
 
   return useMemo(() => {
@@ -172,6 +172,29 @@ function pickOptions<TFeatureProperties extends GeoJsonProperties, TClusterPrope
     reduce,
   } = options
   return { minZoom, maxZoom, radius, minPoints, extent, nodeSize, generateId, map, reduce }
+}
+
+type NormalizedOptions<
+  TFeatureProperties extends GeoJsonProperties,
+  TClusterProperties extends GeoJsonProperties,
+> = ReturnType<typeof pickOptions<TFeatureProperties, TClusterProperties>>
+
+// Keep the compared fields in sync with `pickOptions`; `map`/`reduce` compare by identity.
+function isOptionsEqual<TFeatureProperties extends GeoJsonProperties, TClusterProperties extends GeoJsonProperties>(
+  a: NormalizedOptions<TFeatureProperties, TClusterProperties>,
+  b: NormalizedOptions<TFeatureProperties, TClusterProperties>,
+): boolean {
+  return (
+    a.minZoom === b.minZoom &&
+    a.maxZoom === b.maxZoom &&
+    a.radius === b.radius &&
+    a.minPoints === b.minPoints &&
+    a.extent === b.extent &&
+    a.nodeSize === b.nodeSize &&
+    a.generateId === b.generateId &&
+    a.map === b.map &&
+    a.reduce === b.reduce
+  )
 }
 
 function useWarnIfFunctionOptionChanges<

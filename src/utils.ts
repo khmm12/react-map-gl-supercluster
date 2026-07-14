@@ -1,15 +1,20 @@
-import { dequal } from 'dequal/lite'
 import type { ClusterFeature, PointFeature, RelMapRef } from './types.js'
 
 type MapBounds = [number, number, number, number]
 
-type MapState = {
+export type MapState = {
   bounds: MapBounds
   zoom: number
 }
 
-export function isEqual<T>(a: T, b: T): boolean {
-  return dequal(a, b)
+export function isMapStateEqual(a: MapState | null, b: MapState | null): boolean {
+  if (a === b) return true
+  if (a == null || b == null) return false
+  return a.zoom === b.zoom && isBoundsEqual(a.bounds, b.bounds)
+}
+
+function isBoundsEqual(a: MapBounds, b: MapBounds): boolean {
+  return a === b || (a[0] === b[0] && a[1] === b[1] && a[2] === b[2] && a[3] === b[3])
 }
 
 export function isClustersShallowEqual<T, C extends ReadonlyArray<PointFeature<T> | ClusterFeature<T>>>(
@@ -33,7 +38,12 @@ export function isClustersShallowEqual<T, C extends ReadonlyArray<PointFeature<T
 }
 
 function isPointGeometryEqual<T, P extends PointFeature<T>['geometry']>(a: P, b: P): boolean {
-  return a === b || (a.type === b.type && isEqual(a.coordinates, b.coordinates))
+  return a === b || (a.type === b.type && isPositionEqual(a.coordinates, b.coordinates))
+}
+
+// A GeoJSON Position is [x, y] or [x, y, z] (RFC 7946); the optional z compares via `undefined`.
+function isPositionEqual(a: readonly number[], b: readonly number[]): boolean {
+  return a === b || (a[0] === b[0] && a[1] === b[1] && a[2] === b[2])
 }
 
 export function getMapState(map: RelMapRef): MapState | null {
