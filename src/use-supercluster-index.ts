@@ -18,7 +18,7 @@ type UseSuperclusterIndex = <
   options: SuperclusterOptions<TFeatureProperties, TClusterProperties>,
 ) => SuperclusterInstance<TFeatureProperties, TClusterProperties>
 
-/** Builds a loaded `supercluster` index, memoized by points identity and structurally equal options. */
+/** Builds a loaded `supercluster` index, memoized by shallow points equality and structurally equal options. */
 export const useSuperclusterIndex: UseSuperclusterIndex = DEV
   ? useSuperclusterIndexWithWarnings
   : useSuperclusterIndexImpl
