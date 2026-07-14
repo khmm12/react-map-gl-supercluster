@@ -25,3 +25,7 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Check
         run: pnpm check
+      - name: Build
+        run: pnpm build
+      - name: Check exports
+        run: pnpm check:exports

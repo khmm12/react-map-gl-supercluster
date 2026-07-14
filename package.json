@@ -36,6 +36,7 @@
     "build": "rm -rf dist && tsc -b tsconfig.lib.json --force",
     "example": "vite example",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
+    "check:exports": "attw --pack . --profile esm-only",
     "lint": "biome check",
     "test": "vitest run --coverage",
     "typecheck": "tsc -b --pretty --force"
@@ -65,6 +66,7 @@
     }
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
     "@biomejs/biome": "^2.5.3",
     "@tsconfig/node24": "^24.0.4",
     "@tsconfig/strictest": "^2.0.8",
