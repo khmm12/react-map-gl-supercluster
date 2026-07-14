@@ -15,7 +15,7 @@ export type UseSuperclusterReturnValue<
   TFeatureProperties extends GeoJsonProperties,
   TClusterProperties extends GeoJsonProperties,
 > = {
-  /** Clusters for the current map bounds and rounded zoom. */
+  /** Clusters for the current — optionally padded — map bounds and rounded zoom. */
   clusters: Array<Cluster<TFeatureProperties, TClusterProperties>>
   /** Loaded index for advanced `supercluster` queries. */
   supercluster: SuperclusterInstance<TFeatureProperties, TClusterProperties>
@@ -35,9 +35,10 @@ export type UseSuperclusterOptions<
   /**
    * Extra viewport fraction (per side) included when querying clusters.
    *
-   * Markers near the edges don't pop in and out, and small pans inside the
-   * padded area skip recomputation entirely. The queried area grows as
-   * `(1 + 2 * padding)²`, so large values render more off-screen markers.
+   * Markers near the edges don't pop in and out, and pans inside the padded
+   * area at the same rounded zoom skip recomputation entirely. The queried
+   * area grows as `(1 + 2 * padding)²`, so large values render more
+   * off-screen markers. Non-positive values disable padding.
    *
    * @default 0
    */

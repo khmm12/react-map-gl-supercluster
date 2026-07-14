@@ -190,7 +190,7 @@ Object which contains 2 fields:
 | Option     | Default  | Description                                                                                                                                                                          |
 | ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | mapRef     | Optional | `MapRef` instance. Optional when the hook is rendered inside `Map`.                                                                                                                    |
-| boundsPadding | 0     | Extra viewport fraction (per side) included when querying clusters. Markers near the edges don't pop in and out, and small pans skip recomputation. Larger values render more off-screen markers. |
+| boundsPadding | 0     | Extra viewport fraction (per side) included when querying clusters. Markers near the edges don't pop in and out, and pans at the same zoom inside the padded area skip recomputation. Larger values render more off-screen markers. |
 | minZoom    | 0        | Minimum zoom level at which clusters are generated.                                                                                                                                  |
 | maxZoom    | 16       | Maximum zoom level at which clusters are generated.                                                                                                                                  |
 | minPoints  | 2        | Minimum number of points to form a cluster.                                                                                                                                          |
@@ -208,6 +208,10 @@ Object which contains 2 fields:
 ### Why does it cause component re-rendering or why do I get infinite component update loop?
 
 Please be careful with `points` and `map`/`reduce` functions. They always should be memoized.
+
+### Why does TypeScript reject my properties type?
+
+Properties types must satisfy `Record<string, unknown>`. Type aliases get an implicit index signature, `interface` declarations don't — declare properties types with `type`, not `interface`. Also note that the `cluster` key is reserved for generated clusters and must not appear in point properties.
 
 ### Does it support WebWorker?
 
