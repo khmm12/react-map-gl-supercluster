@@ -41,7 +41,7 @@ export type UseSuperclusterOptions<
    *
    * @default 0
    */
-  boundsPadding?: number
+  boundsPadding?: number | undefined
 }
 
 type UseMap<T> = () => {

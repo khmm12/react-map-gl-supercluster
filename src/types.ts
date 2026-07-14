@@ -73,7 +73,7 @@ export type MapFeatureToCluster<
  */
 export type ReduceCluster<TClusterProperties extends GeoJsonProperties> = (
   memo: TClusterProperties,
-  feature: TClusterProperties,
+  feature: Readonly<TClusterProperties>,
 ) => void
 
 /**
@@ -95,15 +95,15 @@ export type SuperclusterOptions<
   TFeatureProperties extends GeoJsonProperties,
   TClusterProperties extends GeoJsonProperties,
 > = {
-  minZoom?: number
-  maxZoom?: number
-  radius?: number
-  minPoints?: number
-  extent?: number
-  nodeSize?: number
-  generateId?: boolean
-  map?: MapFeatureToCluster<TFeatureProperties, TClusterProperties>
-  reduce?: ReduceCluster<TClusterProperties>
+  minZoom?: number | undefined
+  maxZoom?: number | undefined
+  radius?: number | undefined
+  minPoints?: number | undefined
+  extent?: number | undefined
+  nodeSize?: number | undefined
+  generateId?: boolean | undefined
+  map?: MapFeatureToCluster<TFeatureProperties, TClusterProperties> | undefined
+  reduce?: ReduceCluster<TClusterProperties> | undefined
 }
 
 type LngLatBounds = {
