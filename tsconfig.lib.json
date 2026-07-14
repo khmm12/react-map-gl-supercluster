@@ -3,10 +3,11 @@
   "compilerOptions": {
     "composite": true,
     "declaration": true,
+    "emitDeclarationOnly": true,
     "jsx": "react-jsx",
     "lib": ["ESNext", "DOM"],
     "module": "NodeNext",
-    "outDir": "./dist",
+    "outDir": "./node_modules/.tmp/lib",
     "rootDir": "./src",
     "target": "ESNext"
   },

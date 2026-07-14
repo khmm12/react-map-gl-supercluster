@@ -3,7 +3,12 @@
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "../node_modules/.tmp/tsconfig.example.tsbuildinfo",
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "paths": {
+      "react-map-gl-supercluster/maplibre": ["../src/exports-maplibre.ts"],
+      "react-map-gl-supercluster/mapbox": ["../src/exports-mapbox.ts"],
+      "react-map-gl-supercluster/mapbox-legacy": ["../src/exports-mapbox-legacy.ts"]
+    }
   },
   "include": ["src"],
   "references": [
