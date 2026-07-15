@@ -37,6 +37,7 @@ There is no root entrypoint in v3+ because `react-map-gl` v8 no longer has a def
 import { type ReactElement, useMemo, useRef } from 'react'
 import Map, { type MapRef, Marker } from 'react-map-gl/mapbox'
 import {
+  isCluster,
   type PointClusterProperties,
   type PointFeature,
   type PointFeatureProperties,
@@ -75,7 +76,7 @@ function MyAwesomeMap({ items }: { items: Item[] }): ReactElement {
       {clusters.map((cluster) => {
         const [longitude, latitude] = cluster.geometry.coordinates
 
-        return cluster.properties.cluster ? (
+        return isCluster(cluster) ? (
           <ClusterMarker
             key={`cluster-${cluster.properties.cluster_id}`}
             longitude={longitude}
@@ -119,7 +120,7 @@ If the hook is rendered inside `Map`, `mapRef` can be omitted. The hook resolves
 ```tsx
 import { type ReactElement, useMemo } from 'react'
 import Map, { Marker } from 'react-map-gl/mapbox'
-import { useSupercluster } from 'react-map-gl-supercluster/mapbox'
+import { isCluster, useSupercluster } from 'react-map-gl-supercluster/mapbox'
 
 function MyAwesomeMap({ items }: { items: Item[] }): ReactElement {
   return (
@@ -148,7 +149,7 @@ function Markers(props: MarkersProps) {
       {clusters.map((cluster) => {
         const [longitude, latitude] = cluster.geometry.coordinates
 
-        return cluster.properties.cluster ? (
+        return isCluster(cluster) ? (
           <ClusterMarker
             key={`cluster-${cluster.properties.cluster_id}`}
             longitude={longitude}

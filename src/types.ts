@@ -112,13 +112,15 @@ export type SuperclusterOptions<
   map?: MapFeatureToCluster<TFeatureProperties, TClusterProperties>
   reduce?: ReduceCluster<TClusterProperties>
 }
+
 type LngLatBounds = {
   toArray(): number[][]
 }
 
 type MapEventListener = (...args: unknown[]) => void
 
-export type RelMapRef = {
+/** Minimal structural contract satisfied by every `react-map-gl` `MapRef` flavor. */
+export type MapLike = {
   getBounds(): LngLatBounds | null
   getZoom(): number
   on(type: string, listener: MapEventListener): void
