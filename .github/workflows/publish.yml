@@ -43,8 +43,9 @@ jobs:
           elif [ "$TARGET" = "main" ]; then
             tag=latest
           else
+            # npm rejects dist-tags that parse as a SemVer range (e.g. plain "v3")
             version=$(node -p "require('./package.json').version")
-            tag="v${version%%.*}"
+            tag="v${version%%.*}-latest"
           fi
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
       - name: Publish to npm
