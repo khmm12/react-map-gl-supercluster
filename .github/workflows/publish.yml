@@ -31,5 +31,21 @@ jobs:
         run: pnpm check
       - name: Build
         run: pnpm build
+      - name: Resolve npm dist-tag
+        id: dist_tag
+        env:
+          PRERELEASE: ${{ github.event.release.prerelease }}
+          TARGET: ${{ github.event.release.target_commitish }}
+        # Maintenance releases (e.g. from v3.x) must not steal `latest` from the current major
+        run: |
+          if [ "$PRERELEASE" = "true" ]; then
+            tag=next
+          elif [ "$TARGET" = "main" ]; then
+            tag=latest
+          else
+            version=$(node -p "require('./package.json').version")
+            tag="v${version%%.*}"
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
       - name: Publish to npm
-        run: npm publish --access public
+        run: npm publish --access public --tag "${{ steps.dist_tag.outputs.tag }}"
