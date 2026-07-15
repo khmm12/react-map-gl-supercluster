@@ -1,13 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import MapComponent, { type MapRef, Marker, NavigationControl, Popup } from 'react-map-gl/maplibre'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import {
-  isCluster,
-  type PointClusterProperties,
-  type PointFeature,
-  type PointFeatureProperties,
-  useSupercluster,
-} from 'react-map-gl-supercluster/maplibre'
+import { isCluster, type PointFeature, useSupercluster } from 'react-map-gl-supercluster/maplibre'
 import { type Place, places } from './data.js'
 
 type PlaceFeatureProperties = {
@@ -25,11 +19,11 @@ export default function App() {
   const [map, setMap] = useState<MapRef | null>(null)
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null)
 
-  const points = useMemo<Array<PointFeature<PointFeatureProperties<PlaceFeatureProperties>>>>(
+  const points = useMemo<Array<PointFeature<PlaceFeatureProperties>>>(
     () =>
       places.map((place) => ({
         type: 'Feature',
-        properties: { cluster: false, place },
+        properties: { place },
         geometry: {
           type: 'Point',
           coordinates: [place.longitude, place.latitude],
@@ -39,26 +33,21 @@ export default function App() {
   )
 
   const mapFeature = useCallback(
-    (properties: PointFeatureProperties<PlaceFeatureProperties>): PointClusterProperties<PlaceClusterProperties> => ({
+    (properties: PlaceFeatureProperties): PlaceClusterProperties => ({
       places: [properties.place],
       totalAttendees: properties.place.attendees,
     }),
     [],
   )
 
-  const reduceCluster = useCallback(
-    (
-      memo: PointClusterProperties<PlaceClusterProperties>,
-      properties: PointClusterProperties<PlaceClusterProperties>,
-    ): void => {
-      memo.places = memo.places.concat(properties.places)
-      memo.totalAttendees += properties.totalAttendees
-    },
-    [],
-  )
+  const reduceCluster = useCallback((memo: PlaceClusterProperties, properties: PlaceClusterProperties): void => {
+    memo.places = memo.places.concat(properties.places)
+    memo.totalAttendees += properties.totalAttendees
+  }, [])
 
   const { supercluster, clusters } = useSupercluster<PlaceFeatureProperties, PlaceClusterProperties>(points, {
     mapRef: map,
+    boundsPadding: 0.2,
     map: mapFeature,
     reduce: reduceCluster,
   })

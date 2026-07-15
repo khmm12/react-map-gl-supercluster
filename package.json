@@ -47,10 +47,10 @@
     "supercluster": "^8.0.1"
   },
   "peerDependencies": {
-    "@types/react": ">=16.8.0",
+    "@types/react": ">=18.0.0",
     "mapbox-gl": "*",
     "maplibre-gl": "*",
-    "react": ">=16.8.0",
+    "react": ">=18.0.0",
     "react-map-gl": "^8"
   },
   "peerDependenciesMeta": {

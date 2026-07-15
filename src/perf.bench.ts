@@ -4,7 +4,7 @@ import { isClustersShallowEqual } from './cluster-equality.js'
 import { getMapState, isMapStateEqual } from './map-state.js'
 import type { MapLike, PointFeature } from './types.js'
 
-type Properties = { cluster: false; value: number }
+type Properties = { value: number }
 
 function makePoints(count: number): Array<PointFeature<Properties>> {
   const points: Array<PointFeature<Properties>> = []
@@ -12,7 +12,7 @@ function makePoints(count: number): Array<PointFeature<Properties>> {
     points.push({
       geometry: { coordinates: [Math.random() * 360 - 180, Math.random() * 170 - 85], type: 'Point' },
       id: i,
-      properties: { cluster: false, value: i },
+      properties: { value: i },
       type: 'Feature',
     })
   }

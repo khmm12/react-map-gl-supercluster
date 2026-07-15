@@ -34,45 +34,39 @@ There is no root entrypoint in v3+ because `react-map-gl` v8 no longer has a def
 ## Example usage
 
 ```tsx
-import { type ReactElement, useMemo, useRef } from 'react'
+import { type ReactElement, useMemo, useState } from 'react'
 import Map, { type MapRef, Marker } from 'react-map-gl/mapbox'
-import {
-  isCluster,
-  type PointClusterProperties,
-  type PointFeature,
-  type PointFeatureProperties,
-  useSupercluster,
-} from 'react-map-gl-supercluster/mapbox'
+import { isCluster, type PointFeature, useSupercluster } from 'react-map-gl-supercluster/mapbox'
 
 type Item = {
   id: string
   longitude: number
   latitude: number
 }
-type ItemPointFeatureProperties = PointFeatureProperties<{ item: Item }>
-type ItemPointClusterProperties = PointClusterProperties<{ items: Item[] }>
+type ItemProperties = { item: Item }
+type ItemClusterProperties = { items: Item[] }
 
 function MyAwesomeMap({ items }: { items: Item[] }): ReactElement {
-  const mapRef = useRef<MapRef | null>(null)
+  const [map, setMap] = useState<MapRef | null>(null)
 
   const points = useMemo(() => createPoints(items), [items])
 
   const { supercluster, clusters } = useSupercluster(points, {
-    mapRef,
+    mapRef: map,
     map: mapFeature,
     reduce: reduceCluster,
   })
 
   const expandCluster = (clusterId: number, coordinates: { longitude: number; latitude: number }) => {
     const zoom = supercluster.getClusterExpansionZoom(clusterId)
-    mapRef.current?.easeTo({
+    map?.easeTo({
       center: [coordinates.longitude, coordinates.latitude],
       zoom,
     })
   }
 
   return (
-    <Map ref={mapRef}>
+    <Map ref={setMap}>
       {clusters.map((cluster) => {
         const [longitude, latitude] = cluster.geometry.coordinates
 
@@ -91,14 +85,14 @@ function MyAwesomeMap({ items }: { items: Item[] }): ReactElement {
   )
 }
 
-function createPoints(items: Item[]): Array<PointFeature<ItemPointFeatureProperties>> {
+function createPoints(items: Item[]): Array<PointFeature<ItemProperties>> {
   return items.map(createPoint)
 }
 
-function createPoint(item: Item): PointFeature<ItemPointFeatureProperties> {
+function createPoint(item: Item): PointFeature<ItemProperties> {
   return {
     type: 'Feature',
-    properties: { cluster: false, item },
+    properties: { item },
     geometry: {
       type: 'Point',
       coordinates: [item.longitude, item.latitude],
@@ -106,11 +100,11 @@ function createPoint(item: Item): PointFeature<ItemPointFeatureProperties> {
   }
 }
 
-function mapFeature(props: ItemPointFeatureProperties): ItemPointClusterProperties {
+function mapFeature(props: ItemProperties): ItemClusterProperties {
   return { items: [props.item] }
 }
 
-function reduceCluster(memo: ItemPointClusterProperties, props: ItemPointClusterProperties): void {
+function reduceCluster(memo: ItemClusterProperties, props: ItemClusterProperties): void {
   memo.items = memo.items.concat(props.items)
 }
 ```
@@ -195,7 +189,8 @@ Object which contains 2 fields:
 
 | Option     | Default  | Description                                                                                                                                                                          |
 | ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| mapRef     | Optional | `MapRef` instance or React ref. Optional when the hook is rendered inside `Map`.                                                                                                      |
+| mapRef     | Optional | `MapRef` instance. Optional when the hook is rendered inside `Map`.                                                                                                                    |
+| boundsPadding | 0     | Extra viewport fraction (per side) included when querying clusters. Markers near the edges don't pop in and out, and pans at the same zoom inside the padded area skip recomputation. Larger values render more off-screen markers. |
 | minZoom    | 0        | Minimum zoom level at which clusters are generated.                                                                                                                                  |
 | maxZoom    | 16       | Maximum zoom level at which clusters are generated.                                                                                                                                  |
 | minPoints  | 2        | Minimum number of points to form a cluster.                                                                                                                                          |
@@ -213,6 +208,10 @@ Object which contains 2 fields:
 ### Why does it cause component re-rendering or why do I get infinite component update loop?
 
 Please be careful with `points` and `map`/`reduce` functions. They always should be memoized.
+
+### Why does TypeScript reject my properties type?
+
+Properties types must satisfy `Record<string, unknown>`. Type aliases get an implicit index signature, `interface` declarations don't — declare properties types with `type`, not `interface`. Also note that the `cluster` key is reserved for generated clusters and must not appear in point properties.
 
 ### Does it support WebWorker?
 

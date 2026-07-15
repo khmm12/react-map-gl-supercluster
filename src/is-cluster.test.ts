@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { isCluster } from './is-cluster.js'
 import { pointFeature, type TestClusterProperties, type TestProperties } from './test-helpers.js'
-import type { Cluster, ClusterFeature, PointClusterProperties } from './types.js'
+import type { Cluster, ClusterFeature } from './types.js'
 
 type TestCluster = Cluster<TestProperties, TestClusterProperties>
 
@@ -19,7 +19,7 @@ describe('isCluster', () => {
   })
 })
 
-function clusterFeature(id: number, sum: number): ClusterFeature<PointClusterProperties<TestClusterProperties>> {
+function clusterFeature(id: number, sum: number): ClusterFeature<TestClusterProperties> {
   return {
     geometry: { coordinates: [0, 0], type: 'Point' },
     id,
